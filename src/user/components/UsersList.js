@@ -1,31 +1,35 @@
 import React from 'react'
 
 import UserItem from './UserItem'
-import Card from '../../shared/components/UIElements/Card'
-import './UsersList.css'
+import { Card, Typography, Grid } from '@material-ui/core'
 
 const UsersList = ({ items }) => {
     if (items.length === 0) {
         return (
-            <div className="center">
-                <Card>
-                    <h2>No users found</h2>
-                </Card>
-            </div>
+          <Grid container item justify="center">
+            <Card>
+              <Typography variant="h5" component="h2">
+                No places found. Maybe create one?
+              </Typography>
+            </Card>
+          </Grid>
         )
     }
 
-    return <ul className="users-list">
+    return (
+      <Grid container spacing={2} justify="center">
         {items.map(user => (
-            <UserItem 
-                key={user.id} 
-                id={user.id} 
-                image={user.image} 
-                name={user.name} 
-                placeCount={user.places} 
-            />
+            <Grid item key={user.id} sm={3}>
+              <UserItem 
+                  id={user.id} 
+                  image={user.image} 
+                  name={user.name} 
+                  placeCount={user.places} 
+              />
+            </Grid>
         ))}
-    </ul>
+      </Grid>
+    )
 }
 
 export default UsersList

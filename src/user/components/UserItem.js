@@ -1,28 +1,56 @@
-import React from 'react'
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom'
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import Avatar from '@material-ui/core/Avatar';
+import Typography from '@material-ui/core/Typography';
+import { red } from '@material-ui/core/colors';
 
-import Avatar from '../../shared/components/UIElements/Avatar'
-import Card from '../../shared/components/UIElements/Card'
-import './UserItem.css'
+const useStyles = makeStyles((theme) => ({
+  root: {
+    maxWidth: 345,
+    backgroundColor: "#292929",
+    "&:hover": {
+      backgroundColor: theme.palette.common.amber
+    }
+  },
+  avatar: {
+    backgroundColor: red[500],
+    minWidth: "3rem",
+    minHeight: "3rem"
+  },
+  cardHeader: {
+    textDecoration: "none",
+    color: "white"
+  }
+}));
 
 const UserItem = props => {
-    return (
-        <li className="user-item">
-            <Card className="user-item__content">
-                <Link to={`/${props.id}/places`}>
-                    <div className="user-item__image">
-                        <Avatar image={props.image} alt={props.name} />
-                    </div>
-                    <div className="user-item__info">
-                        <h2>{props.name}</h2>
-                        <h3>
-                            {props.placeCount} {props.placeCount === 1 ? 'Place' : 'Places'}
-                        </h3>
-                    </div>
-                </Link>
-            </Card>
-        </li>
-    )
+  const classes = useStyles();
+
+  return (
+    <Card className={classes.root}>
+      <CardHeader component={Link} to={`/${props.id}/places`}
+        avatar={
+          <Avatar aria-label="recipe" className={classes.avatar} src={props.image} alt={props.alt}>
+            R
+          </Avatar>
+        }
+        title={
+          <Typography variant="h5" component="h2">
+           {props.name}
+          </Typography>
+        }
+        subheader={
+          <Typography varinat="body1" component="p">
+            {`${props.placeCount} ${props.placeCount === 1 ? 'Place' : 'Places'}`}
+          </Typography>
+        }
+        className={classes.cardHeader}
+      />
+    </Card>
+  );
 }
 
 export default UserItem
