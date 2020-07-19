@@ -29,7 +29,7 @@ const PlaceList = ({ items }) => {
             description={place.description}
             address={place.address}
             creatorId={place.creatorId}
-            coordinates={place.location}
+            location={place.location}
           />
         </Grid>
       ))}

@@ -1,6 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Card, Typography, CardActionArea, CardContent, CardMedia, Button, CardActions } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
+
+import SimpleMap from '../../shared/components/UIElements/Map';
+import Modal from '../../shared/components/UIElements/Modal'
 
 const useStyles = makeStyles({
   root: {
@@ -17,7 +20,12 @@ const useStyles = makeStyles({
 
 const PlaceItem = props => {
   const classes = useStyles();
+  const [open, setOpen] = useState(false)
   return (
+    <React.Fragment>
+    <Modal open={open} setOpen={setOpen} header={props.address}>
+      <SimpleMap location={props.location} title={props.title}/>
+    </Modal>
   <Card className={classes.root}>
       <CardActionArea>
         <CardMedia
@@ -38,17 +46,18 @@ const PlaceItem = props => {
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <Button size="small" color="primary">
+        <Button size="small" color="primary" variant="outlined" onClick={()=>setOpen(true)}>
           View on map
         </Button>
-        <Button size="small" color="primary">
+        <Button size="small" color="primary" variant="contained">
           Edit
         </Button>
-        <Button size="small" color="primary">
+        <Button size="small" color="secondary" variant="contained">
           Delete
         </Button>
       </CardActions>
     </Card>
+    </React.Fragment>
   )
 }
 
