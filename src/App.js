@@ -10,7 +10,6 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import Users from './user/pages/Users';
 import NewPlace from './places/pages/NewPlace';
 import UserPlaces from './places/pages/UserPlaces'
-import MainNavigation from './shared/components/Navigation/MainNavigation';
 import Header from './shared/components/Navigation/Header';
 import theme from './shared/components/UIElements/theme';
 import { Container } from '@material-ui/core';
@@ -22,7 +21,6 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <Router>
       <Header value={value} setValue={setValue}/>
-      <MainNavigation />
       <main>
         <Container ml={[0,5]} mr={[0,5]}>
           <Switch>
