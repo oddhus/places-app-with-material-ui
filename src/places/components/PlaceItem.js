@@ -26,7 +26,7 @@ const PlaceItem = props => {
     <Modal open={open} setOpen={setOpen} header={props.address}>
       <SimpleMap location={props.location} title={props.title}/>
     </Modal>
-  <Card className={classes.root}>
+    <Card className={classes.root}>
       <CardActionArea>
         <CardMedia
           className={classes.media}
