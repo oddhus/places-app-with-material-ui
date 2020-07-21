@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import GoogleMapReact from 'google-map-react';
-import RoomIcon from '@material-ui/icons/Room';
-
-const Marker = ({ text }) => <div><RoomIcon/>{text}</div>;
+import './marker.css'
  
 export default function SimpleMap({location, title}){
   const [center, setCenter] = useState({
@@ -12,14 +10,13 @@ export default function SimpleMap({location, title}){
   const [zoom, setZoom] = useState(11)
 
     return (
-      // Important! Always set the container height explicitly
       <div style={{ height: '50vh', width: '100%' }}>
         <GoogleMapReact
           bootstrapURLKeys={{ key: process.env.REACT_APP_MAP_KEY }}
           defaultCenter={center}
           defaultZoom={zoom}
         >
-          <Marker
+          <Marker 
             lat={location.lat}
             lng={location.lng}
             text={title}
@@ -27,4 +24,12 @@ export default function SimpleMap({location, title}){
         </GoogleMapReact>
       </div>
     );
+  }
+
+  const Marker = props => {
+    return <>
+      <div>{props.text}</div>
+      <div className="pin"></div>
+      <div className="pulse"></div>
+    </>
   }
