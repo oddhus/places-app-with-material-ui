@@ -4,8 +4,17 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import SimpleMap from '../../shared/components/UIElements/Map';
 import Modal from '../../shared/components/UIElements/Modal'
+import { Link } from 'react-router-dom';
+import AlertDialog from './AlertDialog';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
+  button: {
+    backgroundColor: theme.palette.error.main,
+    color: "white",
+    "&:hover": {
+      backgroundColor: theme.palette.error.dark,
+    }
+  },
   root: {
     maxWidth: "100%",
   },
@@ -16,16 +25,20 @@ const useStyles = makeStyles({
   pos: {
     marginBottom: 12,
   },
-});
+}));
 
 const PlaceItem = props => {
   const classes = useStyles();
-  const [open, setOpen] = useState(false)
+  const [openMap, setOpenMap] = useState(false)
+  const [openDialog, setOpenDialog] = useState(false)
+
   return (
     <React.Fragment>
-    <Modal open={open} setOpen={setOpen} header={props.address}>
+    <Modal open={openMap} setOpen={setOpenMap} header={props.address}>
       <SimpleMap location={props.location} title={props.title}/>
     </Modal>
+    <AlertDialog open={openDialog} setOpen={setOpenDialog}>
+    </AlertDialog>
     <Card className={classes.root}>
       <CardActionArea>
         <CardMedia
@@ -46,13 +59,13 @@ const PlaceItem = props => {
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <Button size="small" color="primary" variant="outlined" onClick={()=>setOpen(true)}>
+        <Button size="small" color="primary" variant="outlined" onClick={() => setOpenMap(true)}>
           View on map
         </Button>
-        <Button size="small" color="primary" variant="contained">
+        <Button size="small" color="primary" variant="contained" component={Link} to={`/places/${props.id}`}>
           Edit
         </Button>
-        <Button size="small" color="secondary" variant="contained">
+        <Button size="small" className={classes.button} onClick={() => setOpenDialog(true)}>
           Delete
         </Button>
       </CardActions>

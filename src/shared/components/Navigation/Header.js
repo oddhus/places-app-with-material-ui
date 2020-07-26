@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Tabs, Tab, Button, useTheme, useMediaQuery, SwipeableDrawer, IconButton, ListItem, ListItemText, List, Typography } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import MenuIcon from '@material-ui/icons/Menu'
+import { useAuth } from '../../context/auth-context';
 
 //import logo from '../../assets/logo.svg'
 
@@ -101,14 +102,16 @@ export default function Header(props) {
   const theme = useTheme()
   const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent)
   const matches = useMediaQuery(theme.breakpoints.down("md"))
+  const { isLoggedIn } = useAuth()
+  console.log(isLoggedIn)
 
   const [openDrawer, setOpenDrawer] = useState(false)
 
   const routes = [
     {name: "All Users", link: "/", activeIndex: 0},
-    {name: "My Places", link: "/u1/places", activeIndex: 1},
-    {name: "Add place", link: "/places/new", activeIndex: 2},
-    {name: "Authenticate", link: "/auth", activeIndex: 3},
+    isLoggedIn && {name: "My Places", link: "/u1/places", activeIndex: 1},
+    isLoggedIn && {name: "Add place", link: "/places/new", activeIndex: 2},
+    !isLoggedIn && {name: "Authenticate", link: "/auth", activeIndex: 3},
     {name: "About", link: "/about", activeIndex: 4},
   ]
 
@@ -130,18 +133,22 @@ export default function Header(props) {
         onChange={(e, value) => props.setValue(value)}
         className={classes.tabContainer}
       >
-        {routes.map((route) => (
-          <Tab
-            aria-owns={route.ariaOwns}
-            aria-haspopup={route.ariaHaspopup}
-            className={classes.tab}
-            component={Link}
-            key={route.link}
-            label={route.name}
-            onMouseOver={route.onMouseOver}
-            to={route.link}
-            />
-        ))}
+        {routes.map((route) => {
+          if (route) {
+            return (
+              <Tab
+                aria-owns={route.ariaOwns}
+                aria-haspopup={route.ariaHaspopup}
+                className={classes.tab}
+                component={Link}
+                key={route.link}
+                label={route.name}
+                onMouseOver={route.onMouseOver}
+                to={route.link}
+              />
+            )
+          }
+        })}
       </Tabs>
     </React.Fragment>
   )
@@ -154,27 +161,31 @@ export default function Header(props) {
       onOpen={() => setOpenDrawer(true)}
       open={openDrawer}
       >
-        <div className={classes.toolbarMargin}/>
+        <div className={classes.toolbarMargin} />
         <List disablePadding>
-          {routes.map(route => (
-            <ListItem 
-            button
-            classes={{selected: classes.drawerItemSelected}}
-            component={Link} 
-            divider 
-            key={route.link}
-            onClick={() => {setOpenDrawer(false); props.setValue(route.activeIndex)}} 
-            selected={props.value === route.activeIndex} 
-            to={route.link}
-          >
-            <ListItemText
-              className={classes.drawerItem} 
-              disableTypography
-            >
-            {route.name}
-            </ListItemText>
-          </ListItem>
-          ))}
+          {routes.map(route => {
+            if (route) {
+              return (
+                <ListItem
+                  button
+                  classes={{ selected: classes.drawerItemSelected }}
+                  component={Link}
+                  divider
+                  key={route.link}
+                  onClick={() => { setOpenDrawer(false); props.setValue(route.activeIndex) }}
+                  selected={props.value === route.activeIndex}
+                  to={route.link}
+                >
+                  <ListItemText
+                    className={classes.drawerItem}
+                    disableTypography
+                  >
+                    {route.name}
+                  </ListItemText>
+                </ListItem>
+              )
+            }
+          })}
         </List>
       </SwipeableDrawer>
       <IconButton className={classes.drawerIconContainer} onClick={() => setOpenDrawer(!openDrawer)} disableRipple>

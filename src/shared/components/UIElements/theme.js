@@ -1,4 +1,5 @@
 import { createMuiTheme } from '@material-ui/core/styles'
+import { red } from "@material-ui/core/colors";
 
 const lightGreen = "#9ccc65"
 const amber = "#ffca28"
@@ -21,6 +22,9 @@ const theme = createMuiTheme({
       main: '#FFCA28',
       dark: '#c79a00',
       contrastText: '#000',
+    },
+    error: {
+      main: red.A400
     },
   },
   typography: {
