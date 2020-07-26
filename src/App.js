@@ -13,6 +13,7 @@ import UserPlaces from './places/pages/UserPlaces'
 import Header from './shared/components/Navigation/Header';
 import theme from './shared/components/UIElements/theme';
 import { Container } from '@material-ui/core';
+import UpdatePlace from './places/pages/UpdatePlace';
 
 const App = () => {
   const [value, setValue] = useState(0)
@@ -32,6 +33,9 @@ const App = () => {
             </Route>
             <Route path="/places/new" exact>
               <NewPlace />
+            </Route>
+            <Route path="/places/:placeId" exact>
+              <UpdatePlace />
             </Route>
             <Redirect to="/" />
           </Switch>
