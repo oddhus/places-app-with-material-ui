@@ -4,7 +4,7 @@ import Toolbar from '@material-ui/core/Toolbar'
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import { makeStyles } from '@material-ui/styles';
 import { Tabs, Tab, Button, useTheme, useMediaQuery, SwipeableDrawer, IconButton, ListItem, ListItemText, List, Typography } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import MenuIcon from '@material-ui/icons/Menu'
 import { useAuth } from '../../context/auth-context';
 
@@ -26,6 +26,14 @@ function ElevationScroll(props) {
 const useStyles = makeStyles(theme => ({
   appbar: {
     zIndex: theme.zIndex.modal + 1
+  },
+  button: {
+    ...theme.typography.tab,
+    color: "white",
+    opacity: 0.7,
+    "&:hover": {
+      opacity: 1
+    }
   },
   drawer: {
     backgroundColor: theme.palette.common.lightGreen
@@ -102,10 +110,14 @@ export default function Header(props) {
   const theme = useTheme()
   const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent)
   const matches = useMediaQuery(theme.breakpoints.down("md"))
-  const { isLoggedIn } = useAuth()
-  console.log(isLoggedIn)
-
+  const { isLoggedIn, logout } = useAuth()
   const [openDrawer, setOpenDrawer] = useState(false)
+  const history = useHistory()
+
+  function logoutUser(e) {
+    logout()
+    history.push("/")
+  }
 
   const routes = [
     {name: "All Users", link: "/", activeIndex: 0},
@@ -149,6 +161,7 @@ export default function Header(props) {
             )
           }
         })}
+        {isLoggedIn && <Button className={classes.button} onClick={logoutUser}>Logout</Button>}
       </Tabs>
     </React.Fragment>
   )

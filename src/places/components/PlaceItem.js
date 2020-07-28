@@ -6,6 +6,7 @@ import SimpleMap from '../../shared/components/UIElements/Map';
 import Modal from '../../shared/components/UIElements/Modal'
 import { Link } from 'react-router-dom';
 import AlertDialog from './AlertDialog';
+import { useAuth } from '../../shared/context/auth-context';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -31,6 +32,7 @@ const PlaceItem = props => {
   const classes = useStyles();
   const [openMap, setOpenMap] = useState(false)
   const [openDialog, setOpenDialog] = useState(false)
+  const { isLoggedIn } = useAuth()
 
   return (
     <React.Fragment>
@@ -62,12 +64,12 @@ const PlaceItem = props => {
         <Button size="small" color="primary" variant="outlined" onClick={() => setOpenMap(true)}>
           View on map
         </Button>
-        <Button size="small" color="primary" variant="contained" component={Link} to={`/places/${props.id}`}>
+        {isLoggedIn && <Button size="small" color="primary" variant="contained" component={Link} to={`/places/${props.id}`}>
           Edit
-        </Button>
-        <Button size="small" className={classes.button} onClick={() => setOpenDialog(true)}>
+        </Button>}
+        {isLoggedIn && <Button size="small" className={classes.button} onClick={() => setOpenDialog(true)}>
           Delete
-        </Button>
+        </Button>}
       </CardActions>
     </Card>
     </React.Fragment>
