@@ -11,7 +11,6 @@ import theme from './shared/components/UIElements/theme';
 import { AuthProvider } from './shared/context/auth-context';
 import AuthRoutes from './shared/components/Navigation/AuthRoutes';
 
-
 const App = () => {
   const [value, setValue] = useState(0)
 

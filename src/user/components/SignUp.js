@@ -1,17 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Controller, useForm } from 'react-hook-form';
+import axios from 'axios'
+import { useHistory } from 'react-router-dom';
+import { red } from '@material-ui/core/colors';
+
+import { useAuth } from '../../shared/context/auth-context';
+import SuccessBar from '../../shared/components/UIElements/SuccessBar'
+
 
 function Copyright() {
   return (
@@ -53,8 +59,27 @@ const useStyles = makeStyles((theme) => ({
 export default function SignUp({setSignInMode}) {
   const classes = useStyles();
   const { control, handleSubmit, errors } = useForm();
+  const [dbError, setDbError] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [haveCreatedUser, sethaveCreatedUser] = useState(false)
+  const { login } = useAuth()
 
-  const onSubmit = data => console.log(data)
+  const onSubmit = async ({firstName, lastName, email, password}) => {
+    setIsLoading(true)
+    try {
+      await axios.post('http://localhost:5000/api/users/signup',{
+        name: `${firstName} ${lastName}`,
+        email,
+        password
+      })
+      sethaveCreatedUser(true)
+      setIsLoading(false)
+      login({newUser: true})
+    } catch (error) {
+      setIsLoading(false)
+      setDbError(error.response.data.message)
+    }
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -143,14 +168,17 @@ export default function SignUp({setSignInMode}) {
               />
             </Grid>
           </Grid>
+          {dbError && <Grid container item justify="center" style={{marginTop: 10, marginBottom: 0, color: red[400] }}>{dbError}</Grid>}
           <Button
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
             className={classes.submit}
+            disabled={isLoading}
           >
-            Sign Up
+            {!isLoading && "Sign Up"}
+            {isLoading && <CircularProgress color="secondary" size={14}/>}
           </Button>
           <Grid container justify="flex-end">
             <Grid item>

@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme =>({
 
 }));
 
-export default function AlertDialog({open, setOpen, title, contentText, twoButton, btn1Text, btn2Text}) {
+export default function AlertDialog({open, setOpen}) {
   const classes = useStyles()
 
   const handleClose = () => {

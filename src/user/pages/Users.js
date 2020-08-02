@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import UsersList from '../components/UsersList';
+import SuccessBar from '../../shared/components/UIElements/SuccessBar'
+import { useAuth } from '../../shared/context/auth-context';
 
 const Users = () => {
   const USERS = [{
@@ -10,7 +12,17 @@ const Users = () => {
     places: 3
   }]
 
-  return <UsersList items={USERS}/>;
+  const { isNewUser } = useAuth()
+  const [haveCreatedUser, sethaveCreatedUser] = useState(false)
+
+  useEffect(() => {
+    sethaveCreatedUser(isNewUser)
+  }, [isNewUser])
+
+  return <>
+      <SuccessBar open={haveCreatedUser} setOpen={sethaveCreatedUser} message={"Profile created successfully!"} />
+      <UsersList items={USERS}/>;
+    </>
 };
 
 export default Users;

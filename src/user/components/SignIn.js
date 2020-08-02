@@ -58,7 +58,7 @@ export default function SignIn({setSignInMode}) {
   const { login } = useAuth()
   const history = useHistory()
 
-  const onSubmit = data => {
+  const onSubmit = async data => {
     login()
     history.push("/")
   }  

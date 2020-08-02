@@ -4,9 +4,13 @@ const AuthContext = createContext({})
 
 export function AuthProvider({ children }) {
   const [isLoggedIn, setIsloggedin] = useState(false);
+  const [isNewUser, setIsNewUser] = useState(false)
  
-    const login = useCallback(() => {
+    const login = useCallback((info) => {
         setIsloggedin(true);
+        if(info){
+          setIsNewUser(info.newUser)
+        }
     }, []);
  
     const logout = useCallback(() => {
@@ -14,7 +18,7 @@ export function AuthProvider({ children }) {
     }, []);
 
   return (
-    <AuthContext.Provider value={{isLoggedIn, login, logout}}>
+    <AuthContext.Provider value={{isLoggedIn, login, logout, isNewUser}}>
       { children }
     </AuthContext.Provider>
   );
