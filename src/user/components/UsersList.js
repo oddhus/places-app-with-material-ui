@@ -19,12 +19,12 @@ const UsersList = ({ items }) => {
     return (
       <Grid container spacing={2} justify="center">
         {items.map(user => (
-            <Grid item key={user.id} sm={3}>
+            <Grid item key={user.id} sm={6} md={4} lg={3} style={{width: "100%"}}>
               <UserItem 
                   id={user.id} 
                   image={user.image} 
                   name={user.name} 
-                  placeCount={user.places} 
+                  placeCount={user.places.length} 
               />
             </Grid>
         ))}

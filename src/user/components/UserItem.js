@@ -5,24 +5,27 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
-import { red } from '@material-ui/core/colors';
+import { blue } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    maxWidth: 345,
-    backgroundColor: "#292929",
     "&:hover": {
-      backgroundColor: theme.palette.common.amber
+      backgroundColor: theme.palette.primary.light
     }
   },
   avatar: {
-    backgroundColor: red[500],
+    backgroundColor: theme.palette.secondary.main,
     minWidth: "3rem",
     minHeight: "3rem"
   },
   cardHeader: {
     textDecoration: "none",
-    color: "white"
+    color: "#292929",
+    justifyContent:"center",
+    alignItems: "center"
+  },
+  subheader: {
+    fontSize: 16
   }
 }));
 
@@ -38,12 +41,12 @@ const UserItem = props => {
           </Avatar>
         }
         title={
-          <Typography variant="h5" component="h2">
+          <Typography variant="h6">
            {props.name}
           </Typography>
         }
         subheader={
-          <Typography varinat="body1" component="p">
+          <Typography varinat="body1" component="p" className={classes.subheader}>
             {`${props.placeCount} ${props.placeCount === 1 ? 'Place' : 'Places'}`}
           </Typography>
         }
