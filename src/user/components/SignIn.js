@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -12,8 +12,11 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useForm, Controller } from 'react-hook-form'
+import CircularProgress from '@material-ui/core/CircularProgress';
+import axios from 'axios'
+
+import StatusBar from '../../shared/components/UIElements/StatusBar'
 import { useAuth } from '../../shared/context/auth-context';
-import { useHistory } from 'react-router-dom';
 
 function Copyright() {
   return (
@@ -55,16 +58,35 @@ const useStyles = makeStyles((theme) => ({
 export default function SignIn({setSignInMode}) {
   const classes = useStyles();
   const { control, handleSubmit, errors } = useForm();
+  const [dbError, setDbError] = useState("")
+  const [openError, setOpenError] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const { login } = useAuth()
-  const history = useHistory()
 
-  const onSubmit = async data => {
-    login()
-    history.push("/")
+  const onSubmit = async ({email, password}) => {
+    setOpenError(false)
+    setIsLoading(true)
+    try {
+      const response = await axios.post('http://localhost:5000/api/users/signin',{
+        email,
+        password
+      })
+      setIsLoading(false)
+      if(response.statusText === 'OK'){
+        login()
+      }
+    } catch (error) {
+      setIsLoading(false)
+      setDbError(error.response.data.message)
+      setOpenError(true)
+    }
   }  
 
   return (
     <Container component="main" maxWidth="xs">
+      <StatusBar open={openError} setOpen={setOpenError} severity={"error"}>
+        {dbError}
+      </StatusBar>
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
@@ -115,8 +137,10 @@ export default function SignIn({setSignInMode}) {
             variant="contained"
             color="primary"
             className={classes.submit}
+            disabled={isLoading}
           >
-            Sign In
+            {!isLoading && "Sign In"}
+            {isLoading && <CircularProgress size={16}/>}
           </Button>
           <Grid container>
             <Grid item xs>

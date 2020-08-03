@@ -12,11 +12,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Controller, useForm } from 'react-hook-form';
 import axios from 'axios'
-import { useHistory } from 'react-router-dom';
-import { red } from '@material-ui/core/colors';
 
 import { useAuth } from '../../shared/context/auth-context';
-import SuccessBar from '../../shared/components/UIElements/SuccessBar'
+import StatusBar from '../../shared/components/UIElements/StatusBar'
 
 
 function Copyright() {
@@ -60,11 +58,12 @@ export default function SignUp({setSignInMode}) {
   const classes = useStyles();
   const { control, handleSubmit, errors } = useForm();
   const [dbError, setDbError] = useState("")
+  const [openError, setOpenError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [haveCreatedUser, sethaveCreatedUser] = useState(false)
   const { login } = useAuth()
 
   const onSubmit = async ({firstName, lastName, email, password}) => {
+    setOpenError(false)
     setIsLoading(true)
     try {
       await axios.post('http://localhost:5000/api/users/signup',{
@@ -72,17 +71,20 @@ export default function SignUp({setSignInMode}) {
         email,
         password
       })
-      sethaveCreatedUser(true)
       setIsLoading(false)
       login({newUser: true})
     } catch (error) {
       setIsLoading(false)
       setDbError(error.response.data.message)
+      setOpenError(true)
     }
   }
 
   return (
     <Container component="main" maxWidth="xs">
+      <StatusBar open={openError} setOpen={setOpenError} severity={"error"}>
+        {dbError}
+      </StatusBar>
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
@@ -168,7 +170,6 @@ export default function SignUp({setSignInMode}) {
               />
             </Grid>
           </Grid>
-          {dbError && <Grid container item justify="center" style={{marginTop: 10, marginBottom: 0, color: red[400] }}>{dbError}</Grid>}
           <Button
             type="submit"
             fullWidth
@@ -178,7 +179,7 @@ export default function SignUp({setSignInMode}) {
             disabled={isLoading}
           >
             {!isLoading && "Sign Up"}
-            {isLoading && <CircularProgress color="secondary" size={14}/>}
+            {isLoading && <CircularProgress size={16}/>}
           </Button>
           <Grid container justify="flex-end">
             <Grid item>

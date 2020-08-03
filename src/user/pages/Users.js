@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import UsersList from '../components/UsersList';
-import SuccessBar from '../../shared/components/UIElements/SuccessBar'
+import StatusBar from '../../shared/components/UIElements/StatusBar'
 import { useAuth } from '../../shared/context/auth-context';
 
 const Users = () => {
@@ -20,7 +20,9 @@ const Users = () => {
   }, [isNewUser])
 
   return <>
-      <SuccessBar open={haveCreatedUser} setOpen={sethaveCreatedUser} message={"Profile created successfully!"} />
+      <StatusBar open={haveCreatedUser} setOpen={sethaveCreatedUser} severity={"success"}>
+        Profile created successfully!
+      </StatusBar>
       <UsersList items={USERS}/>;
     </>
 };
