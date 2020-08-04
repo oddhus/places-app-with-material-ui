@@ -63,21 +63,7 @@ export default function SignUp({setSignInMode}) {
   const { auth } = useStore()
 
   const onSubmit = async ({firstName, lastName, email, password}) => {
-    setOpenError(false)
-    setIsLoading(true)
-    try {
-      const response = await axios.post('http://localhost:5000/api/users/signup',{
-        name: `${firstName} ${lastName}`,
-        email,
-        password
-      })
-      setIsLoading(false)
-      auth.login({newUser: true, userId: response.data.id})
-    } catch (error) {
-      setIsLoading(false)
-      setDbError(error.response.data.message)
-      setOpenError(true)
-    }
+    await auth.signup(firstName, lastName, email, password)
   }
 
   return (

@@ -17,6 +17,7 @@ import axios from 'axios'
 
 import StatusBar from '../../shared/components/UIElements/StatusBar'
 import { useStore } from '../../shared/store/store';
+import { useObserver } from 'mobx-react-lite';
 
 function Copyright() {
   return (
@@ -58,34 +59,16 @@ const useStyles = makeStyles((theme) => ({
 export default function SignIn({setSignInMode}) {
   const classes = useStyles();
   const { control, handleSubmit, errors } = useForm();
-  const [dbError, setDbError] = useState("")
-  const [openError, setOpenError] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const { auth } = useStore()
 
   const onSubmit = async ({email, password}) => {
-    setOpenError(false)
-    setIsLoading(true)
-    try {
-      const response = await axios.post('http://localhost:5000/api/users/signin',{
-        email,
-        password
-      })
-      setIsLoading(false)
-      if(response.statusText === 'OK'){
-        auth.login({newUser: false, userId: response.data.user.id})
-      }
-    } catch (error) {
-      setIsLoading(false)
-      setDbError(error.response ? error.response.data.message : "Ops.. Something went wrong!")
-      setOpenError(true)
-    }
+    await auth.login(email, password)
   }  
 
-  return (
+  return useObserver(() => (
     <Container component="main" maxWidth="xs">
-      <StatusBar open={openError} setOpen={setOpenError} severity={"error"}>
-        {dbError}
+      <StatusBar open={auth.openLoginError} setOpen={auth.setOpenLoginError} severity={"error"}>
+        {auth.loginError}
       </StatusBar>
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
@@ -142,10 +125,10 @@ export default function SignIn({setSignInMode}) {
             variant="contained"
             color="primary"
             className={classes.submit}
-            disabled={isLoading}
+            disabled={auth.isLoading}
           >
-            {!isLoading && "Sign In"}
-            {isLoading && <CircularProgress size={16}/>}
+            {!auth.isLoading && "Sign In"}
+            {auth.isLoading && <CircularProgress size={16}/>}
           </Button>
           <Grid container>
             <Grid item xs>
@@ -165,5 +148,5 @@ export default function SignIn({setSignInMode}) {
         <Copyright />
       </Box>
     </Container>
-  );
+  ));
 }
