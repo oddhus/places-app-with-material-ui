@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/styles';
 import { Tabs, Tab, Button, useTheme, useMediaQuery, SwipeableDrawer, IconButton, ListItem, ListItemText, List, Typography } from '@material-ui/core';
 import { Link, useHistory } from 'react-router-dom';
 import MenuIcon from '@material-ui/icons/Menu'
-import { useAuth } from '../../context/auth-context';
+import { useStore } from '../../store/store';
 
 //import logo from '../../assets/logo.svg'
 
@@ -110,7 +110,7 @@ export default function Header(props) {
   const theme = useTheme()
   const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent)
   const matches = useMediaQuery(theme.breakpoints.down("md"))
-  const { isLoggedIn, logout } = useAuth()
+  const { auth: {isLoggedIn, logout} } = useStore()
   const [openDrawer, setOpenDrawer] = useState(false)
   const history = useHistory()
 
@@ -213,7 +213,7 @@ export default function Header(props) {
         <AppBar position="fixed" className={classes.appbar}>
           <Toolbar disableGutters>
             <Button component={Link} to="/" className={classes.logoContainer} onClick={() => props.setValue(0)} disableRipple>
-              <Typography variant="h2" style={{color: "white"}}>Places App</Typography>
+              <Typography variant="h2" style={{color: "white", paddingLeft: 10}}>Places App</Typography>
               {/* <img alt="company logo" src={logo} className={classes.logo} /> */}
             </Button>
             {matches ? drawer : tabs}

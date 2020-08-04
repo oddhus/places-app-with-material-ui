@@ -1,12 +1,44 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm, Controller }  from 'react-hook-form'
-import { TextField, Button, Grid } from '@material-ui/core'
+import { TextField, Button, Grid, CircularProgress } from '@material-ui/core'
+import axios from 'axios'
+
+import StatusBar from '../../shared/components/UIElements/StatusBar'
+import { useHistory } from 'react-router-dom';
+import { useStore } from '../../shared/store/store';
 
 const NewPlace = () => {
   const { control, handleSubmit, errors } = useForm();
-  const onSubmit = data => console.log(data);
+  const [dbError, setDbError] = useState("")
+  const [openError, setOpenError] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const history = useHistory()
+  const { auth } = useStore()
+
+  const onSubmit = async ({title, description, address}) => {
+    setOpenError(false)
+    setIsLoading(true)
+    try {
+      const response = await axios.post('http://localhost:5000/api/places/',{
+        title,
+        description,
+        address,
+        creator: auth.userId
+      })
+      setIsLoading(false)
+      history.push(`/${auth.userId}/places`)
+    } catch (error) {
+      setIsLoading(false)
+      setDbError(error.response.data.message)
+      setOpenError(true)
+    }
+  }  
 
   return (
+    <>
+    <StatusBar open={openError} setOpen={setOpenError} severity={"error"}>
+        {dbError}
+    </StatusBar>
     <Grid container justify="center">
     <Grid item sm={8}>
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -54,12 +86,16 @@ const NewPlace = () => {
           />
         </Grid>
         <Grid item>
-          <Button type="submit" variant="contained" color="secondary">Add place</Button>
+          <Button type="submit" variant="contained" color="secondary">
+            {!isLoading && "Add place"}
+            {isLoading && <CircularProgress size={16}/>}
+          </Button>
         </Grid>
       </Grid>
     </form>
     </Grid>
     </Grid>
+    </>
   );
 }
 

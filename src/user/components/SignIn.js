@@ -16,7 +16,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios'
 
 import StatusBar from '../../shared/components/UIElements/StatusBar'
-import { useAuth } from '../../shared/context/auth-context';
+import { useStore } from '../../shared/store/store';
 
 function Copyright() {
   return (
@@ -61,7 +61,7 @@ export default function SignIn({setSignInMode}) {
   const [dbError, setDbError] = useState("")
   const [openError, setOpenError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const { login } = useAuth()
+  const { auth } = useStore()
 
   const onSubmit = async ({email, password}) => {
     setOpenError(false)
@@ -73,11 +73,11 @@ export default function SignIn({setSignInMode}) {
       })
       setIsLoading(false)
       if(response.statusText === 'OK'){
-        login()
+        auth.login({newUser: false, userId: response.data.user.id})
       }
     } catch (error) {
       setIsLoading(false)
-      setDbError(error.response.data.message)
+      setDbError(error.response ? error.response.data.message : "Ops.. Something went wrong!")
       setOpenError(true)
     }
   }  
@@ -97,7 +97,12 @@ export default function SignIn({setSignInMode}) {
         <form className={classes.form} onSubmit={handleSubmit(onSubmit)}>
           <Controller
             as={TextField}
-            rules={{required: "Email is required"}}
+            rules={{
+                  required: "Email is required", 
+                  pattern: {
+                    value: /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/, 
+                    message: "Enter a valid email address"
+                }}}
             control={control}
             defaultValue=""
             variant="outlined"

@@ -5,7 +5,6 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import Avatar from '@material-ui/core/Avatar';
 import Typography from '@material-ui/core/Typography';
-import { blue } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
   root: {

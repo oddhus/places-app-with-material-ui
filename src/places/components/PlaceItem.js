@@ -6,7 +6,8 @@ import SimpleMap from '../../shared/components/UIElements/Map';
 import Modal from '../../shared/components/UIElements/Modal'
 import { Link } from 'react-router-dom';
 import AlertDialog from './AlertDialog';
-import { useAuth } from '../../shared/context/auth-context';
+import { useStore } from '../../shared/store/store';
+import { useObserver } from 'mobx-react-lite';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -32,9 +33,9 @@ const PlaceItem = props => {
   const classes = useStyles();
   const [openMap, setOpenMap] = useState(false)
   const [openDialog, setOpenDialog] = useState(false)
-  const { isLoggedIn } = useAuth()
+  const { auth } = useStore()
 
-  return (
+  return useObserver(() =>(
     <React.Fragment>
     <Modal open={openMap} setOpen={setOpenMap} header={props.address}>
       <SimpleMap location={props.location} title={props.title}/>
@@ -64,16 +65,16 @@ const PlaceItem = props => {
         <Button size="small" color="primary" variant="outlined" onClick={() => setOpenMap(true)}>
           View on map
         </Button>
-        {isLoggedIn && <Button size="small" color="primary" variant="contained" component={Link} to={`/places/${props.id}`}>
+        {auth.isLoggedIn && <Button size="small" color="primary" variant="contained" component={Link} to={`/places/${props.id}`}>
           Edit
         </Button>}
-        {isLoggedIn && <Button size="small" className={classes.button} onClick={() => setOpenDialog(true)}>
+        {auth.isLoggedIn && <Button size="small" className={classes.button} onClick={() => setOpenDialog(true)}>
           Delete
         </Button>}
       </CardActions>
     </Card>
     </React.Fragment>
-  )
+  ))
 }
 
 

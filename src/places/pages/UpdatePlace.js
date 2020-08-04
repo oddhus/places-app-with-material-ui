@@ -1,68 +1,87 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useForm, Controller }  from 'react-hook-form'
-import { TextField, Button, Grid, Card, Typography, CardContent } from '@material-ui/core'
-import { useParams } from 'react-router-dom'
+import { TextField, Button, Grid, CircularProgress } from '@material-ui/core'
+import { useParams, useHistory } from 'react-router-dom'
+import useSWR from 'swr'
+import axios from 'axios'
 
-const DUMMY_PLACES = [{
-  id: 'p1',
-  title: 'Empire State Building',
-  description: 'One of the most famous sky scrapers in the world',
-  imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/10/Empire_State_Building_%28aerial_view%29.jpg',
-  address: '20 W 34th St, New York, NY 10001, USA',
-  location: {
-      lat: 40.7484405,
-      lng: -73.9878584
-  },
-  creatorId: 'u1'
-}, {
-  id: 'p2',
-  title: 'Empire State Building',
-  description: 'One of the most famous sky scrapers in the world',
-  imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/10/Empire_State_Building_%28aerial_view%29.jpg',
-  address: '20 W 34th St, New York, NY 10001, USA',
-  location: {
-      lat: 40.7484405,
-      lng: -73.9878584
-  },
-  creatorId: 'u2'
-}]
+import { useStore } from '../../shared/store/store'
+import StatusBar from '../../shared/components/UIElements/StatusBar'
+
+
+const placeEndpoint = "http://localhost:5000/api/places";
+
+const getData = async (id) => {
+  try {
+    const response = await axios(`${placeEndpoint}/${id}`);
+    return response.data.place
+  } catch (error) {
+    throw error
+  }
+};
+
+const updateTodo = async (id, title, description, setDbError) => {
+  try {
+    const response = await axios.patch(`${placeEndpoint}/${id}`, {
+      title,
+      description
+    });
+    return  response.data.place;
+  } catch (error) {
+    setDbError(error.response ? error.response.data.message : "Something went wrong... Could not update place!")
+    throw error
+  }
+};
 
 export default function UpdatePlace() {
-  const placeId = useParams().placeId
-  const identifiedPlace = DUMMY_PLACES.find(p => p.id === placeId)
-
+  const { placeId } = useParams()
   const { control, handleSubmit, errors,reset } = useForm();
+  const [dbError, setDbError] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [openStatus, setOpenStatus] = useState(false)
+  const { ui, auth } = useStore()
+  const history = useHistory()
+
+  const key = `${placeEndpoint}/${placeId}`;
+  const { data, error, mutate, isValidating } = useSWR(key, () => getData(placeId))
   
-  const onSubmit = data => console.log(data);
-
-  useEffect(() => {
-    //const result = await fetch('./api/formValues.json'); // result: { firstName: 'test', lastName: 'test2' }
-    if(identifiedPlace){
-      reset({
-        title: identifiedPlace.title,
-        description: identifiedPlace.description,
-        address: identifiedPlace.address
-      });
+  const onSubmit = async ({title, description}) => {
+    setDbError("")
+    setIsLoading(true)
+    const updatedplace = {
+      ...data,
+      title,
+      description
     }
-  }, [reset, identifiedPlace])
-
-  if (!identifiedPlace) {
-    return (
-      <Grid container justify="center">
-        <Grid item>
-          <Card>
-            <CardContent>
-              <Typography variant="h5" component="h2">
-                Could not find place.
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-    )
+    await updateTodo(placeId,title, description, setDbError)
+    mutate(updatedplace)
+    setIsLoading(false)
+    ui.setUpdatedPlace(true)
+    ui.resetUpdatedPlace()
+    history.push(`/${auth.userId}/places`)
   }
 
+  useEffect(() => {
+    if(dbError){
+      setOpenStatus(true)
+      setIsLoading(false)
+    }
+  }, [dbError])
+
+  useEffect(() => {
+    if(data){
+      reset({
+        title: data.title,
+        description: data.description,
+      });
+    }
+  }, [reset, data, isValidating])
+
   return (
+    <>
+    <StatusBar open={openStatus} setOpen={setOpenStatus} severity={"error"}>
+      {dbError}
+    </StatusBar>
     <Grid container justify="center">
     <Grid item sm={8}>
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -97,24 +116,23 @@ export default function UpdatePlace() {
           />
         </Grid>
         <Grid item>
-          <Controller
-            as={TextField}
-            control={control}
-            rules={{required: "This is required"}}
-            defaultValue=""
-            name="address"
-            label="Address"
-            error={!!errors.address}
-            helperText={errors.address ? errors.address.message : ""}
-            fullWidth
-          />
-        </Grid>
-        <Grid item>
-          <Button type="submit" variant="contained" color="secondary">Update place</Button>
+         <Grid container justify="flex-end" spacing={2}>
+          <Grid item>
+            <Button variant="contained" onClick={() => history.push(`/${auth.userId}/places`)}>
+              Cancel
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button type="submit" variant="contained" color="secondary" disabled={isLoading}>
+              {isLoading ? <CircularProgress size={16}/> : "Update Place"}
+            </Button>
+          </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </form>
     </Grid>
     </Grid>
+    </>
   );
 }

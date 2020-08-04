@@ -8,15 +8,15 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 
 import Header from './shared/components/Navigation/Header';
 import theme from './shared/components/UIElements/theme';
-import { AuthProvider } from './shared/context/auth-context';
 import AuthRoutes from './shared/components/Navigation/AuthRoutes';
+import { StoreProvider } from './shared/store/store';
 
 const App = () => {
   const [value, setValue] = useState(0)
 
   return (
-    <ThemeProvider theme={theme}>
-      <AuthProvider>
+    <StoreProvider>
+      <ThemeProvider theme={theme}>
         <CssBaseline />
         <Router>
           <Header value={value} setValue={setValue} />
@@ -26,8 +26,8 @@ const App = () => {
             </Container>
           </main>
         </Router>
-      </AuthProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </StoreProvider>
   )
 }
 

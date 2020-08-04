@@ -13,8 +13,8 @@ import Container from '@material-ui/core/Container';
 import { Controller, useForm } from 'react-hook-form';
 import axios from 'axios'
 
-import { useAuth } from '../../shared/context/auth-context';
 import StatusBar from '../../shared/components/UIElements/StatusBar'
+import { useStore } from '../../shared/store/store';
 
 
 function Copyright() {
@@ -60,19 +60,19 @@ export default function SignUp({setSignInMode}) {
   const [dbError, setDbError] = useState("")
   const [openError, setOpenError] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const { login } = useAuth()
+  const { auth } = useStore()
 
   const onSubmit = async ({firstName, lastName, email, password}) => {
     setOpenError(false)
     setIsLoading(true)
     try {
-      await axios.post('http://localhost:5000/api/users/signup',{
+      const response = await axios.post('http://localhost:5000/api/users/signup',{
         name: `${firstName} ${lastName}`,
         email,
         password
       })
       setIsLoading(false)
-      login({newUser: true})
+      auth.login({newUser: true, userId: response.data.id})
     } catch (error) {
       setIsLoading(false)
       setDbError(error.response.data.message)

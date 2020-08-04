@@ -1,33 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import useSWR from "swr";
 import axios from 'axios'
+import { CircularProgress, Grid, Typography } from '@material-ui/core';
 
 import UsersList from '../components/UsersList';
 import StatusBar from '../../shared/components/UIElements/StatusBar'
-import { useAuth } from '../../shared/context/auth-context';
-import { CircularProgress, Grid } from '@material-ui/core';
+import { red } from '@material-ui/core/colors';
+import { useStore } from '../../shared/store/store';
 
 const usersEndpoint = "http://localhost:5000/api/users";
 
 const getData = async () => {
-  const response = await axios(usersEndpoint);
-  return response.data.users
+  try {
+    const response = await axios(usersEndpoint);
+    return response.data.users
+  } catch (error) {
+    throw error
+  }
 };
 
 const Users = () => {
-  const { isNewUser } = useAuth()
+  const { auth } = useStore()
+  console.log(auth.isNewUser)
   const [haveCreatedUser, sethaveCreatedUser] = useState(false)
 
   useEffect(() => {
-    sethaveCreatedUser(isNewUser)
-  }, [isNewUser])
+    sethaveCreatedUser(auth.isNewUser)
+  }, [auth.isNewUser])
 
-  const { data: users } = useSWR(usersEndpoint, getData);
+  const { data: users, error } = useSWR(usersEndpoint, getData);
+
+  if(error){
+    return (
+      <Grid container item justify="center">
+        <Typography variant="h4" style={{color: red[400], marginTop: "5em"}}>
+          Something went wrong! Please try again later...
+        </Typography>
+      </Grid>
+    )
+  }
 
   if(!users){
     return (
       <Grid container item justify="center">
-        <CircularProgress />
+        <CircularProgress style={{marginTop: "5em"}} />
       </Grid>
     )
   }

@@ -44,11 +44,15 @@ const theme = createMuiTheme({
     h3: {
       fontFamily: "Pacifico",
       fontSize: "2.5rem",
-      color: lightGreen
+      color: '#6b9b37'
     },
     h4: {
       fontFamily: "Raleway",
       fontSize: "1.75rem",
+      color: lightGreen,
+      fontWeight: 700
+    },
+    h6:{
       color: lightGreen,
       fontWeight: 700
     },

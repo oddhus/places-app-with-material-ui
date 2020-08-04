@@ -5,18 +5,18 @@ import {
   Switch
 } from 'react-router-dom';
 
-import { useAuth } from '../../context/auth-context';
-
 import UpdatePlace from '../../../places/pages/UpdatePlace'
 import Users from '../../../user/pages/Users';
 import NewPlace from '../../../places/pages/NewPlace';
 import UserPlaces from '../../../places/pages/UserPlaces'
 import About from '../../../user/pages/About';
 import Auth from '../../../user/pages/Auth'
+import { useStore } from '../../store/store';
+import { useObserver } from 'mobx-react-lite';
 
 export default function AuthRoutes() {
 
-  const { isLoggedIn } = useAuth()
+  const { auth } = useStore()
 
   const authRoutes = (
     <Switch>
@@ -39,10 +39,7 @@ export default function AuthRoutes() {
     </Switch>
   )
 
-  if (isLoggedIn){
-    return authRoutes
-  } else {
-    return unAuthRoutes
-  }
-
+  return useObserver(() => (
+    auth.isLoggedIn ? authRoutes : unAuthRoutes
+  ))
 }
