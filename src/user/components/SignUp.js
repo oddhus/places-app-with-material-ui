@@ -118,7 +118,7 @@ export default function SignUp({setSignInMode}) {
                 rules={{
                   required: "Email is required", 
                   pattern: {
-                    value: /^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$/, 
+                    value: /^([a-zA-Z0-9_\-.]+)@([a-zA-Z0-9_\-.]+)\.([a-zA-Z]{2,5})$/, 
                     message: "Enter a valid email address"
                 }}}
                 control={control}
