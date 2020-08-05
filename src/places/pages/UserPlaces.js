@@ -34,8 +34,8 @@ const UserPlaces = () => {
             <CircularProgress/>
           </Grid> 
         : <> 
-            <StatusBar open={ui.updatedPlace} setOpen={ui.setUpdatedPlace} severity={"success"}>
-              {"Place updated!"}
+            <StatusBar open={ui.showStatus} setOpen={ui.setShowStatus} severity={"success"}>
+              {ui.statusMessage}
             </StatusBar>
             <PlaceList items={data}/>
           </>

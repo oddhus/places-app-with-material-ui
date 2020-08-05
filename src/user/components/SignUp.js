@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -11,10 +11,10 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Controller, useForm } from 'react-hook-form';
-import axios from 'axios'
 
 import StatusBar from '../../shared/components/UIElements/StatusBar'
 import { useStore } from '../../shared/store/store';
+import { useObserver } from 'mobx-react-lite';
 
 
 function Copyright() {
@@ -57,19 +57,16 @@ const useStyles = makeStyles((theme) => ({
 export default function SignUp({setSignInMode}) {
   const classes = useStyles();
   const { control, handleSubmit, errors } = useForm();
-  const [dbError, setDbError] = useState("")
-  const [openError, setOpenError] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const { auth } = useStore()
 
   const onSubmit = async ({firstName, lastName, email, password}) => {
     await auth.signup(firstName, lastName, email, password)
   }
 
-  return (
+  return useObserver(() => (
     <Container component="main" maxWidth="xs">
-      <StatusBar open={openError} setOpen={setOpenError} severity={"error"}>
-        {dbError}
+      <StatusBar open={auth.openSignUpError} setOpen={auth.setOpenSignUpError} severity={"error"}>
+        {auth.signUpError}
       </StatusBar>
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
@@ -162,10 +159,9 @@ export default function SignUp({setSignInMode}) {
             variant="contained"
             color="primary"
             className={classes.submit}
-            disabled={isLoading}
+            disabled={auth.isLoading}
           >
-            {!isLoading && "Sign Up"}
-            {isLoading && <CircularProgress size={16}/>}
+            {auth.isLoading ? <CircularProgress size={16}/> : "Sign Up"}
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
@@ -180,5 +176,5 @@ export default function SignUp({setSignInMode}) {
         <Copyright />
       </Box>
     </Container>
-  );
+  ))
 }

@@ -14,6 +14,9 @@ export function authStore() {
     setOpenLoginError(value){
       this.openLoginError = value
     },
+    setOpenSignUpError(value){
+      this.signUpError = value
+    },
     async login(email, password, newUser = false){
       this.openLoginError = false
       this.isLoading = true

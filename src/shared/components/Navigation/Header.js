@@ -7,6 +7,7 @@ import { Tabs, Tab, Button, useTheme, useMediaQuery, SwipeableDrawer, IconButton
 import { Link, useHistory } from 'react-router-dom';
 import MenuIcon from '@material-ui/icons/Menu'
 import { useStore } from '../../store/store';
+import { useObserver } from 'mobx-react-lite';
 
 //import logo from '../../assets/logo.svg'
 
@@ -110,33 +111,31 @@ export default function Header(props) {
   const theme = useTheme()
   const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent)
   const matches = useMediaQuery(theme.breakpoints.down("md"))
-  const { auth: {isLoggedIn, logout} } = useStore()
+  const { auth } = useStore()
   const [openDrawer, setOpenDrawer] = useState(false)
   const history = useHistory()
 
   function logoutUser(e) {
-    logout()
+    props.setValue(0)
+    auth.logout()
     history.push("/")
   }
 
   const routes = [
     {name: "All Users", link: "/", activeIndex: 0},
-    isLoggedIn && {name: "My Places", link: "/u1/places", activeIndex: 1},
-    isLoggedIn && {name: "Add place", link: "/places/new", activeIndex: 2},
-    !isLoggedIn && {name: "Authenticate", link: "/auth", activeIndex: 3},
+    auth.isLoggedIn && {name: "My Places", link: "/u1/places", activeIndex: 1},
+    auth.isLoggedIn && {name: "Add place", link: "/places/new", activeIndex: 2},
+    !auth.isLoggedIn && {name: "Authenticate", link: "/auth", activeIndex: 3},
     {name: "About", link: "/about", activeIndex: 4},
   ]
 
   useEffect(() => {
     const pathname = window.location.pathname;
-    const valueIndex = routes.findIndex(option => option.link === pathname);
+    let routeIndex = routes.filter(route => route).findIndex(route => route.link === pathname)
 
-    if(pathname === '/estimate') {
-      props.setValue(5)
-    } else {
-      props.setValue(valueIndex === -1 ? 1 : valueIndex);
-    }
-}, [routes, props]);
+    props.setValue(routeIndex === -1 ? 1 : routeIndex);
+    
+  }, [routes, props]);
 
   const tabs = (
     <React.Fragment>
@@ -146,7 +145,7 @@ export default function Header(props) {
         className={classes.tabContainer}
       >
         {routes.map((route) => {
-          if (route) {
+           if(route){
             return (
               <Tab
                 aria-owns={route.ariaOwns}
@@ -159,10 +158,10 @@ export default function Header(props) {
                 to={route.link}
               />
             )
-          }
+           }
         })}
-        {isLoggedIn && <Button className={classes.button} onClick={logoutUser}>Logout</Button>}
       </Tabs>
+      {auth.isLoggedIn && <Button className={classes.button} onClick={logoutUser}>Logout</Button>}
     </React.Fragment>
   )
 
@@ -207,7 +206,7 @@ export default function Header(props) {
     </React.Fragment>
   )
 
-  return (
+  return useObserver(() => (
     <React.Fragment>
       <ElevationScroll>
         <AppBar position="fixed" className={classes.appbar}>
@@ -222,5 +221,5 @@ export default function Header(props) {
       </ElevationScroll>
       <div className={classes.toolbarMargin} />
     </React.Fragment>
-  )
+  ))
 }

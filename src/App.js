@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import 'mobx-react-lite/batchingForReactDom'
 import {
   BrowserRouter as Router,
 } from 'react-router-dom';

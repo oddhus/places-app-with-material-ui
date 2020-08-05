@@ -6,18 +6,15 @@ import axios from 'axios'
 import StatusBar from '../../shared/components/UIElements/StatusBar'
 import { useHistory } from 'react-router-dom';
 import { useStore } from '../../shared/store/store';
+import { useObserver } from 'mobx-react-lite'
 
 const NewPlace = () => {
   const { control, handleSubmit, errors } = useForm();
-  const [dbError, setDbError] = useState("")
-  const [openError, setOpenError] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const history = useHistory()
-  const { auth } = useStore()
+  const { auth, ui } = useStore()
 
   const onSubmit = async ({title, description, address}) => {
-    setOpenError(false)
-    setIsLoading(true)
+    ui.setIsLoading(true)
     try {
       const response = await axios.post('http://localhost:5000/api/places/',{
         title,
@@ -25,19 +22,21 @@ const NewPlace = () => {
         address,
         creator: auth.userId
       })
-      setIsLoading(false)
+      ui.setIsLoading(false)
+      ui.setStatusMessage('New place created!')
+      ui.startShowStatus()
       history.push(`/${auth.userId}/places`)
     } catch (error) {
-      setIsLoading(false)
-      setDbError(error.response.data.message)
-      setOpenError(true)
+      ui.setIsLoading(false)
+      ui.setErrorMessage(error.response ? error.response.data.message : "Ops, something went wrong. Please try again later!")
+      ui.startShowError(true)
     }
   }  
 
-  return (
+  return useObserver(() => (
     <>
-    <StatusBar open={openError} setOpen={setOpenError} severity={"error"}>
-        {dbError}
+    <StatusBar open={ui.showError} setOpen={ui.setShowError} severity={"error"}>
+      {ui.errorMessage}
     </StatusBar>
     <Grid container justify="center">
     <Grid item sm={8}>
@@ -59,7 +58,13 @@ const NewPlace = () => {
         <Grid item>
           <Controller
             as={TextField}
-            rules={{required: "This is required"}}
+            rules={{
+              required: "This is required",
+              minLength: {
+                value: 5,
+                message: "The description must be at least 5 characters"
+              }
+            }}
             control={control}
             defaultValue=""
             name="description"
@@ -86,17 +91,25 @@ const NewPlace = () => {
           />
         </Grid>
         <Grid item>
-          <Button type="submit" variant="contained" color="secondary">
-            {!isLoading && "Add place"}
-            {isLoading && <CircularProgress size={16}/>}
-          </Button>
+          <Grid container justify="flex-end" spacing={2}>
+            <Grid item>
+              <Button variant="contained" onClick={() => history.push(`/${auth.userId}/places`)}>
+                Cancel
+              </Button>
+            </Grid>
+            <Grid item>
+              <Button type="submit" variant="contained" color="secondary" disabled={ui.isLoading}>
+                {ui.isLoading ? <CircularProgress size={16}/> : "Add place"}
+              </Button>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
     </form>
     </Grid>
     </Grid>
     </>
-  );
+  ))
 }
 
 export default NewPlace;

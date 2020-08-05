@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useForm, Controller }  from 'react-hook-form'
 import { TextField, Button, Grid, CircularProgress } from '@material-ui/core'
 import { useParams, useHistory } from 'react-router-dom'
@@ -7,6 +7,7 @@ import axios from 'axios'
 
 import { useStore } from '../../shared/store/store'
 import StatusBar from '../../shared/components/UIElements/StatusBar'
+import { useObserver } from 'mobx-react-lite'
 
 
 const placeEndpoint = "http://localhost:5000/api/places";
@@ -20,7 +21,7 @@ const getData = async (id) => {
   }
 };
 
-const updateTodo = async (id, title, description, setDbError) => {
+const updateTodo = async (id, title, description, setDbError, showError) => {
   try {
     const response = await axios.patch(`${placeEndpoint}/${id}`, {
       title,
@@ -28,7 +29,9 @@ const updateTodo = async (id, title, description, setDbError) => {
     });
     return  response.data.place;
   } catch (error) {
+    console.log(error.response)
     setDbError(error.response ? error.response.data.message : "Something went wrong... Could not update place!")
+    showError()
     throw error
   }
 };
@@ -36,9 +39,6 @@ const updateTodo = async (id, title, description, setDbError) => {
 export default function UpdatePlace() {
   const { placeId } = useParams()
   const { control, handleSubmit, errors,reset } = useForm();
-  const [dbError, setDbError] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [openStatus, setOpenStatus] = useState(false)
   const { ui, auth } = useStore()
   const history = useHistory()
 
@@ -46,27 +46,19 @@ export default function UpdatePlace() {
   const { data, error, mutate, isValidating } = useSWR(key, () => getData(placeId))
   
   const onSubmit = async ({title, description}) => {
-    setDbError("")
-    setIsLoading(true)
+    ui.setIsLoading(true)
     const updatedplace = {
       ...data,
       title,
       description
     }
-    await updateTodo(placeId,title, description, setDbError)
+    await updateTodo(placeId,title, description, ui.setErrorMessage, ui.startShowError)
     mutate(updatedplace)
-    setIsLoading(false)
-    ui.setUpdatedPlace(true)
-    ui.resetUpdatedPlace()
+    ui.setIsLoading(false)
+    ui.setStatusMessage('Place updated!')
+    ui.startShowStatus()
     history.push(`/${auth.userId}/places`)
   }
-
-  useEffect(() => {
-    if(dbError){
-      setOpenStatus(true)
-      setIsLoading(false)
-    }
-  }, [dbError])
 
   useEffect(() => {
     if(data){
@@ -77,10 +69,10 @@ export default function UpdatePlace() {
     }
   }, [reset, data, isValidating])
 
-  return (
+  return useObserver(() => (
     <>
-    <StatusBar open={openStatus} setOpen={setOpenStatus} severity={"error"}>
-      {dbError}
+    <StatusBar open={ui.showError} setOpen={ui.setShowError} severity={"error"}>
+      {ui.errorMessage}
     </StatusBar>
     <Grid container justify="center">
     <Grid item sm={8}>
@@ -102,7 +94,13 @@ export default function UpdatePlace() {
         <Grid item>
           <Controller
             as={TextField}
-            rules={{required: "This is required"}}
+            rules={{
+              required: "This is required",
+              minLength: {
+                value: 5,
+                message: "The description must be at least 5 characters"
+              }
+            }}
             control={control}
             defaultValue=""
             name="description"
@@ -123,8 +121,8 @@ export default function UpdatePlace() {
             </Button>
           </Grid>
           <Grid item>
-            <Button type="submit" variant="contained" color="secondary" disabled={isLoading}>
-              {isLoading ? <CircularProgress size={16}/> : "Update Place"}
+            <Button type="submit" variant="contained" color="secondary" disabled={ui.isLoading}>
+              {ui.isLoading ? <CircularProgress size={16}/> : "Update Place"}
             </Button>
           </Grid>
           </Grid>
@@ -134,5 +132,5 @@ export default function UpdatePlace() {
     </Grid>
     </Grid>
     </>
-  );
+  ))
 }
