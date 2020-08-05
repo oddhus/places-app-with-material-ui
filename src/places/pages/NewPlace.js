@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useForm, Controller }  from 'react-hook-form'
 import { TextField, Button, Grid, CircularProgress } from '@material-ui/core'
 import axios from 'axios'
@@ -16,27 +16,27 @@ const NewPlace = () => {
   const onSubmit = async ({title, description, address}) => {
     ui.setIsLoading(true)
     try {
-      const response = await axios.post('http://localhost:5000/api/places/',{
+      await axios.post('http://localhost:5000/api/places/',{
         title,
         description,
         address,
         creator: auth.userId
       })
-      ui.setIsLoading(false)
       ui.setStatusMessage('New place created!')
-      ui.startShowStatus()
+      ui.setIsLoading(false)
+      ui.startShowStatus(true)
       history.push(`/${auth.userId}/places`)
     } catch (error) {
+      ui.setStatusMessage(error.response ? error.response.data.message : "Ops, something went wrong. Please try again later!")
       ui.setIsLoading(false)
-      ui.setErrorMessage(error.response ? error.response.data.message : "Ops, something went wrong. Please try again later!")
-      ui.startShowError(true)
+      ui.startShowStatus(true)
     }
   }  
 
   return useObserver(() => (
     <>
-    <StatusBar open={ui.showError} setOpen={ui.setShowError} severity={"error"}>
-      {ui.errorMessage}
+    <StatusBar open={ui.showStatus} setOpen={ui.setShowStatus} severity={"error"}>
+      {ui.statusMessage}
     </StatusBar>
     <Grid container justify="center">
     <Grid item sm={8}>

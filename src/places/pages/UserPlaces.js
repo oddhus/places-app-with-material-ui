@@ -24,9 +24,25 @@ const UserPlaces = () => {
   const { userId } = useParams()
   const key = `${userPlacesEndpoint}/${userId}`
 
-  const { data, error } = useSWR(key, () => getData(userId))
-
+  const { data, error, mutate } = useSWR(key, () => getData(userId))
   const { ui } = useStore()
+
+  const handleDelete = async (id) => {
+    ui.setIsLoading(true)
+    try {
+      await axios.delete(`http://localhost:5000/api/places/${id}`)
+      await mutate(async places => {
+        const index = places.findIndex(place => place.id === id) + 1
+        return [...places.slice(index)]
+      })
+      ui.setStatusMessage("Place deleted!")
+    } catch (error) {
+      ui.setStatusMessage(error.response ? error.response.data.message : "Something went wrong, could not delete place.")
+      ui.isError = true
+    }
+    ui.setIsLoading(false)
+    ui.startShowStatus()
+  }
 
   return useObserver(() => (
       !data && !error 
@@ -34,10 +50,10 @@ const UserPlaces = () => {
             <CircularProgress/>
           </Grid> 
         : <> 
-            <StatusBar open={ui.showStatus} setOpen={ui.setShowStatus} severity={"success"}>
+            <StatusBar open={ui.showStatus} setOpen={ui.setShowStatus} severity={ui.isError ? "error" : "success"}>
               {ui.statusMessage}
             </StatusBar>
-            <PlaceList items={data}/>
+            <PlaceList items={data} handleDelete={handleDelete}/>
           </>
   ))
 }

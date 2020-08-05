@@ -29,7 +29,6 @@ const updateTodo = async (id, title, description, setDbError, showError) => {
     });
     return  response.data.place;
   } catch (error) {
-    console.log(error.response)
     setDbError(error.response ? error.response.data.message : "Something went wrong... Could not update place!")
     showError()
     throw error
@@ -43,7 +42,7 @@ export default function UpdatePlace() {
   const history = useHistory()
 
   const key = `${placeEndpoint}/${placeId}`;
-  const { data, error, mutate, isValidating } = useSWR(key, () => getData(placeId))
+  const { data, mutate, isValidating } = useSWR(key, () => getData(placeId))
   
   const onSubmit = async ({title, description}) => {
     ui.setIsLoading(true)
@@ -52,8 +51,8 @@ export default function UpdatePlace() {
       title,
       description
     }
-    await updateTodo(placeId,title, description, ui.setErrorMessage, ui.startShowError)
-    mutate(updatedplace)
+    await updateTodo(placeId,title, description, ui.setStatusMessage, ui.startShowStatus)
+    await mutate(updatedplace)
     ui.setIsLoading(false)
     ui.setStatusMessage('Place updated!')
     ui.startShowStatus()
@@ -71,8 +70,8 @@ export default function UpdatePlace() {
 
   return useObserver(() => (
     <>
-    <StatusBar open={ui.showError} setOpen={ui.setShowError} severity={"error"}>
-      {ui.errorMessage}
+    <StatusBar open={ui.showStatus} setOpen={ui.setShowStatus} severity={"error"}>
+      {ui.statusMessage}
     </StatusBar>
     <Grid container justify="center">
     <Grid item sm={8}>

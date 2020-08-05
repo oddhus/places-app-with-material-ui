@@ -17,12 +17,13 @@ const useStyles = makeStyles(theme =>({
     }
   },
   header: {
-    backgroundColor: theme.palette.common.lightGreen
+    //backgroundColor: theme.palette.common.lightGreen,
+    color: "white"
   }
 
 }));
 
-export default function AlertDialog({open, setOpen}) {
+export default function AlertDialog({open, setOpen, id, handleDelete}) {
   const classes = useStyles()
 
   const handleClose = () => {
@@ -47,7 +48,7 @@ export default function AlertDialog({open, setOpen}) {
           <Button onClick={handleClose} color="primary" variant="outlined" >
             Cancel
           </Button>
-          <Button onClick={handleClose} className={classes.button} autoFocus>
+          <Button onClick={() => handleDelete(id)} className={classes.button} autoFocus>
             Delete
           </Button>
         </DialogActions>

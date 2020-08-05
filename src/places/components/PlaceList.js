@@ -1,10 +1,11 @@
 import React from 'react'
 
-import { Grid, Typography, Card, Button } from '@material-ui/core'
+import { Grid, Typography, Card } from '@material-ui/core'
 
 import PlaceItem from './PlaceItem'
 
-const PlaceList = ({ items }) => {
+const PlaceList = ({ items, handleDelete }) => {
+
   if (!items) {
     return (
       <Grid container item justify="center" sm={12}>
@@ -22,6 +23,7 @@ const PlaceList = ({ items }) => {
       {items.map((place, i) => (
         <Grid item key={`${place.id}-${i}`} sm={6}>
           <PlaceItem
+            handleDelete={handleDelete}
             id={place.id}
             image={place.image}
             title={place.title}

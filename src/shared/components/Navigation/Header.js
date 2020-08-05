@@ -144,9 +144,7 @@ export default function Header(props) {
         onChange={(e, value) => props.setValue(value)}
         className={classes.tabContainer}
       >
-        {routes.map((route) => {
-           if(route){
-            return (
+        {routes.filter(route => route !== false).map(route => (
               <Tab
                 aria-owns={route.ariaOwns}
                 aria-haspopup={route.ariaHaspopup}
@@ -158,8 +156,7 @@ export default function Header(props) {
                 to={route.link}
               />
             )
-           }
-        })}
+        )}
       </Tabs>
       {auth.isLoggedIn && <Button className={classes.button} onClick={logoutUser}>Logout</Button>}
     </React.Fragment>
@@ -175,9 +172,7 @@ export default function Header(props) {
       >
         <div className={classes.toolbarMargin} />
         <List disablePadding>
-          {routes.map(route => {
-            if (route) {
-              return (
+          {routes.filter(route => route !== false).map(route => (
                 <ListItem
                   button
                   classes={{ selected: classes.drawerItemSelected }}
@@ -196,8 +191,7 @@ export default function Header(props) {
                   </ListItemText>
                 </ListItem>
               )
-            }
-          })}
+          )}
         </List>
       </SwipeableDrawer>
       <IconButton className={classes.drawerIconContainer} onClick={() => setOpenDrawer(!openDrawer)} disableRipple>

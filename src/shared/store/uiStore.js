@@ -7,6 +7,7 @@ export function uiStore(){
 
     showStatus: false,
     statusMessage: "",
+    isError: false,
     setStatusMessage(message){
       this.statusMessage = message
     },
@@ -17,25 +18,9 @@ export function uiStore(){
       this.isLoading = false
       this.showStatus = true
       setTimeout(() => {
+        this.isError = false
         this.showStatus = false
         this.statusMessage = ""
-      }, 5000)
-    },
-
-    showError: false,
-    errorMessage: "",
-    setErrorMessage(message){
-      this.errorMessage = message
-    },
-    setShowError(value){
-      this.showError = value
-    },
-    startShowError(){
-      this.isLoading = false
-      this.showError = true
-      setTimeout(() => {
-        this.showError = false
-        this.errorMessage = ""
       }, 5000)
     }
   }

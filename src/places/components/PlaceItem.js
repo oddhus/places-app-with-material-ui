@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { Card, Typography, CardActionArea, CardContent, CardMedia, Button, CardActions } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
+import { Link } from 'react-router-dom';
+import { useStore } from '../../shared/store/store';
+import { useObserver } from 'mobx-react-lite';
 
 import SimpleMap from '../../shared/components/UIElements/Map';
 import Modal from '../../shared/components/UIElements/Modal'
-import { Link } from 'react-router-dom';
 import AlertDialog from './AlertDialog';
-import { useStore } from '../../shared/store/store';
-import { useObserver } from 'mobx-react-lite';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -40,7 +40,7 @@ const PlaceItem = props => {
     <Modal open={openMap} setOpen={setOpenMap} header={props.address}>
       <SimpleMap location={props.location} title={props.title}/>
     </Modal>
-    <AlertDialog open={openDialog} setOpen={setOpenDialog}>
+    <AlertDialog open={openDialog} setOpen={setOpenDialog} id={props.id} handleDelete={props.handleDelete}>
     </AlertDialog>
     <Card className={classes.root}>
       <CardActionArea>
