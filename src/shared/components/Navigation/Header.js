@@ -123,7 +123,7 @@ export default function Header(props) {
 
   const routes = [
     {name: "All Users", link: "/", activeIndex: 0},
-    auth.isLoggedIn && {name: "My Places", link: "/u1/places", activeIndex: 1},
+    auth.isLoggedIn && {name: "My Places", link: `/${auth.userId}/places`, activeIndex: 1},
     auth.isLoggedIn && {name: "Add place", link: "/places/new", activeIndex: 2},
     !auth.isLoggedIn && {name: "Authenticate", link: "/auth", activeIndex: 3},
     {name: "About", link: "/about", activeIndex: 4},

@@ -51,16 +51,22 @@ const useStyles = makeStyles((theme) => ({
   button: {
     textTransform: "none",
     fontFamily: "Arial"
+  },
+  buttonUpload: {
+    margin: theme.spacing.unit,
+  },
+  input: {
+    display: 'none',
   }
 }));
 
 export default function SignUp({setSignInMode}) {
   const classes = useStyles();
-  const { control, handleSubmit, errors } = useForm();
+  const { control, register, handleSubmit, errors } = useForm();
   const { auth } = useStore()
 
-  const onSubmit = async ({firstName, lastName, email, password}) => {
-    await auth.signup(firstName, lastName, email, password)
+  const onSubmit = async ({firstName, lastName, email, password, uploadPhoto}) => {
+    await auth.signup(firstName, lastName, email, password, uploadPhoto)
   }
 
   return useObserver(() => (
@@ -151,6 +157,20 @@ export default function SignUp({setSignInMode}) {
                 error={!!errors.password}
                 helperText={errors.password ? errors.password.message : ""}
               />
+            </Grid>
+            <Grid item xs={12}>
+              <label htmlFor="uploadPhoto">
+                <input
+                  style={{ display: "none" }}
+                  id="uploadPhoto"
+                  name="uploadPhoto"
+                  type="file"
+                  ref={register}
+                />
+                <Button color="secondary" variant="contained" component="span">
+                  Upload Profile Picture
+                </Button>{" "}
+              </label>
             </Grid>
           </Grid>
           <Button

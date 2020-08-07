@@ -65,10 +65,10 @@ const PlaceItem = props => {
         <Button size="small" color="primary" variant="outlined" onClick={() => setOpenMap(true)}>
           View on map
         </Button>
-        {auth.isLoggedIn && <Button size="small" color="primary" variant="contained" component={Link} to={`/places/${props.id}`}>
+        {auth.userId === props.creator && <Button size="small" color="primary" variant="contained" component={Link} to={`/places/${props.id}`}>
           Edit
         </Button>}
-        {auth.isLoggedIn && <Button size="small" className={classes.button} onClick={() => setOpenDialog(true)}>
+        {auth.userId === props.creator && <Button size="small" className={classes.button} onClick={() => setOpenDialog(true)}>
           Delete
         </Button>}
       </CardActions>

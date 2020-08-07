@@ -1,7 +1,8 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { useForm, Controller }  from 'react-hook-form'
 import { TextField, Button, Grid, CircularProgress } from '@material-ui/core'
 import axios from 'axios'
+import ImageUploader from "react-images-upload";
 
 import StatusBar from '../../shared/components/UIElements/StatusBar'
 import { useHistory } from 'react-router-dom';
@@ -9,18 +10,35 @@ import { useStore } from '../../shared/store/store';
 import { useObserver } from 'mobx-react-lite'
 
 const NewPlace = () => {
-  const { control, handleSubmit, errors } = useForm();
+  const { control, handleSubmit, errors, register, setValue } = useForm();
   const history = useHistory()
   const { auth, ui } = useStore()
 
-  const onSubmit = async ({title, description, address}) => {
+  const onDrop = picture => {
+    setValue( 'image', picture)
+  };
+
+  useEffect(() => {
+    register({ name: 'image' })
+  }, [])
+
+  const onSubmit = async ({title, description, address, image}) => {
     ui.setIsLoading(true)
+    const placeFormData = new FormData();
+    placeFormData.append("image", image ? image[0] : null)
+    placeFormData.append("title", title);
+    placeFormData.append("description", description);
+    placeFormData.append("address", address);
+    placeFormData.append("creator", auth.userId);
+
     try {
-      await axios.post('http://localhost:5000/api/places/',{
-        title,
-        description,
-        address,
-        creator: auth.userId
+      await axios({
+        method: "POST",
+        url: "http://localhost:5000/api/places/",
+        data: placeFormData,
+        headers: {
+        'Content-Type': 'multipart/form-data;'
+        }
       })
       ui.setStatusMessage('New place created!')
       ui.setIsLoading(false)
@@ -88,6 +106,15 @@ const NewPlace = () => {
             error={!!errors.address}
             helperText={errors.address ? errors.address.message : ""}
             fullWidth
+          />
+        </Grid>
+        <Grid item>
+          <ImageUploader
+            withPreview
+            withIcon={true}
+            onChange={onDrop}
+            imgExtension={[".jpg", ".gif", ".png", ".gif"]}
+            maxFileSize={5242880}
           />
         </Grid>
         <Grid item>

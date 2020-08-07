@@ -17,7 +17,7 @@ export function authStore() {
     setOpenSignUpError(value){
       this.signUpError = value
     },
-    async login(email, password, newUser = false){
+    async login(email, password){
       this.openLoginError = false
       this.isLoading = true
       try {
@@ -36,14 +36,22 @@ export function authStore() {
         this.openLoginError = true
       }
     },
-    async signup(firstName, lastName, email, password){
+    async signup(firstName, lastName, email, password, image){
       this.openLoginError = false
       this.isLoading = true
+      const userFormData = new FormData();
+      userFormData.append("image", image ? image[0] : null)
+      userFormData.append("name", `${firstName} ${lastName}`);
+      userFormData.append("email", email);
+      userFormData.append("password", password);
       try {
-        const response = await axios.post('http://localhost:5000/api/users/signup',{
-          name: `${firstName} ${lastName}`,
-          email,
-          password
+        const response = await axios({
+          method: "POST",
+          url: 'http://localhost:5000/api/users/signup',
+          data: userFormData,
+          headers: {
+          'Content-Type': 'multipart/form-data;'
+          }
         })
         this.isLoading = false
         this.isLoggedIn = true
