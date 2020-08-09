@@ -37,7 +37,8 @@ const NewPlace = () => {
         url: "http://localhost:5000/api/places/",
         data: placeFormData,
         headers: {
-        'Content-Type': 'multipart/form-data;'
+        'Content-Type': 'multipart/form-data;',
+        'Authorization': `token ${auth.token}`
         }
       })
       ui.setStatusMessage('New place created!')

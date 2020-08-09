@@ -25,12 +25,16 @@ const UserPlaces = () => {
   const key = `${userPlacesEndpoint}/${userId}`
 
   const { data, error, mutate } = useSWR(key, () => getData(userId))
-  const { ui } = useStore()
+  const { ui, auth } = useStore()
 
   const handleDelete = async (id) => {
     ui.setIsLoading(true)
     try {
-      await axios.delete(`http://localhost:5000/api/places/${id}`)
+      await axios.delete(`http://localhost:5000/api/places/${id}`, {
+        headers: {
+          'Authorization': `token ${auth.token}`
+        }
+      } )
       await mutate(async places => {
         const index = places.findIndex(place => place.id === id) + 1
         return [...places.slice(index)]

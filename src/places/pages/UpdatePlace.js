@@ -21,12 +21,19 @@ const getData = async (id) => {
   }
 };
 
-const updateTodo = async (id, title, description, setDbError, showError) => {
+const updateTodo = async (id, title, description, setDbError, showError, token) => {
   try {
-    const response = await axios.patch(`${placeEndpoint}/${id}`, {
-      title,
-      description
-    });
+    const response = await axios({
+        method: "PATCH",
+        url: `${placeEndpoint}/${id}`,
+        data: {
+          title,
+          description
+        },
+        headers: {
+          'Authorization': `token ${token}`
+        }
+    })
     return  response.data.place;
   } catch (error) {
     setDbError(error.response ? error.response.data.message : "Something went wrong... Could not update place!")
@@ -51,7 +58,7 @@ export default function UpdatePlace() {
       title,
       description
     }
-    await updateTodo(placeId,title, description, ui.setStatusMessage, ui.startShowStatus)
+    await updateTodo(placeId,title, description, ui.setStatusMessage, ui.startShowStatus, auth.token)
     await mutate(updatedplace)
     ui.setIsLoading(false)
     ui.setStatusMessage('Place updated!')

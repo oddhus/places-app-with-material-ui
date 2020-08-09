@@ -6,6 +6,7 @@ export function authStore() {
     isLoggedIn: false,
     isNewUser: false,
     userId: "",
+    token: "",
     loginError: "",
     signUpError: "",
     openLoginError: false,
@@ -27,8 +28,9 @@ export function authStore() {
         })
         this.isLoading = false
         if(response.statusText === 'OK'){
-          this.isLoggedIn = true
-          this.userId = response.data.user.id
+          this.isLoggedIn = !!response.data.token
+          this.userId = response.data.userId
+          this.token = response.data.token
         }
       } catch (error) {
         this.isLoading = false
@@ -54,8 +56,9 @@ export function authStore() {
           }
         })
         this.isLoading = false
-        this.isLoggedIn = true
-        this.userId = response.data.user.id
+        this.userId = response.data.userId
+        this.token = response.data.token
+        this.isLoggedIn = !!response.data.token
         this.isNewUser = true
         setTimeout(() => {
           this.isNewUser = false
@@ -68,7 +71,8 @@ export function authStore() {
     },
     logout(){
       this.isLoggedIn = false
-      this.userId = ""
+      this.userId = null
+      this.token = null
     }
   }
 }
