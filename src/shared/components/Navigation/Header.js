@@ -32,6 +32,7 @@ const useStyles = makeStyles(theme => ({
     ...theme.typography.tab,
     color: "white",
     opacity: 0.7,
+    marginLeft: 20,
     "&:hover": {
       opacity: 1
     }
@@ -123,9 +124,9 @@ export default function Header(props) {
 
   const routes = [
     {name: "All Users", link: "/", activeIndex: 0},
-    auth.isLoggedIn && {name: "My Places", link: `/${auth.userId}/places`, activeIndex: 1},
-    auth.isLoggedIn && {name: "Add place", link: "/places/new", activeIndex: 2},
-    !auth.isLoggedIn && {name: "Authenticate", link: "/auth", activeIndex: 3},
+    auth.isLoggedIn() && {name: "My Places", link: `/${auth.userId}/places`, activeIndex: 1},
+    auth.isLoggedIn() && {name: "Add place", link: "/places/new", activeIndex: 2},
+    !auth.isLoggedIn() && {name: "Authenticate", link: "/auth", activeIndex: 3},
     {name: "About", link: "/about", activeIndex: 4},
   ]
 
@@ -133,7 +134,7 @@ export default function Header(props) {
     const pathname = window.location.pathname;
     let routeIndex = routes.filter(route => route).findIndex(route => route.link === pathname)
 
-    props.setValue(routeIndex === -1 ? 1 : routeIndex);
+    props.setValue(routeIndex === -1 ? 0 : routeIndex);
     
   }, [routes, props]);
 
@@ -158,7 +159,7 @@ export default function Header(props) {
             )
         )}
       </Tabs>
-      {auth.isLoggedIn && <Button className={classes.button} onClick={logoutUser}>Logout</Button>}
+      {auth.isLoggedIn() && <Button className={classes.button} onClick={logoutUser}>Logout</Button>}
     </React.Fragment>
   )
 

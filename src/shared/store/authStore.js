@@ -3,15 +3,18 @@ import axios from 'axios'
 export function authStore() {
   // note the use of this which refers to observable instance of the this
   return {
-    isLoggedIn: false,
     isNewUser: false,
-    userId: "",
-    token: "",
+    userId: !!localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')).userId : "",
+    token: !!localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')).token : "",
+    expirationDate: !!localStorage.getItem('userData') ? JSON.parse(localStorage.getItem('userData')).expirationDate : null,
     loginError: "",
     signUpError: "",
     openLoginError: false,
     openSignUpError: false,
     isLoading: false,
+    isLoggedIn(){
+      return !!this.token && !!this.userId && (new Date(this.expirationDate) > new Date())
+    },
     setOpenLoginError(value){
       this.openLoginError = value
     },
@@ -28,9 +31,7 @@ export function authStore() {
         })
         this.isLoading = false
         if(response.statusText === 'OK'){
-          this.isLoggedIn = !!response.data.token
-          this.userId = response.data.userId
-          this.token = response.data.token
+          this.handleLogin(response)
         }
       } catch (error) {
         this.isLoading = false
@@ -55,10 +56,8 @@ export function authStore() {
           'Content-Type': 'multipart/form-data;'
           }
         })
+        this.handleLogin(response)
         this.isLoading = false
-        this.userId = response.data.userId
-        this.token = response.data.token
-        this.isLoggedIn = !!response.data.token
         this.isNewUser = true
         setTimeout(() => {
           this.isNewUser = false
@@ -69,10 +68,16 @@ export function authStore() {
         this.openSignUpError = true
       }
     },
+    handleLogin(response){
+      this.userId = response.data.userId
+      this.token = response.data.token
+      this.expirationDate = new Date(new Date().getTime() + 1000 * 60 * 60)
+      localStorage.setItem('userData', JSON.stringify({userId: this.userId, token: this.token, expirationDate: this.expirationDate.toISOString()}))
+    },
     logout(){
-      this.isLoggedIn = false
       this.userId = null
       this.token = null
+      localStorage.removeItem('userData')
     }
   }
 }

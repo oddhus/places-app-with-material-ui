@@ -29,7 +29,6 @@ const NewPlace = () => {
     placeFormData.append("title", title);
     placeFormData.append("description", description);
     placeFormData.append("address", address);
-    placeFormData.append("creator", auth.userId);
 
     try {
       await axios({

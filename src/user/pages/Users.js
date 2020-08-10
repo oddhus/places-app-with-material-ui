@@ -21,7 +21,6 @@ const getData = async () => {
 
 const Users = () => {
   const { auth } = useStore()
-  console.log(auth.isNewUser)
   const [haveCreatedUser, sethaveCreatedUser] = useState(false)
 
   useEffect(() => {

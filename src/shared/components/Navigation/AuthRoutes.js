@@ -40,6 +40,6 @@ export default function AuthRoutes() {
   )
 
   return useObserver(() => (
-    auth.token ? authRoutes : unAuthRoutes
+    auth.isLoggedIn() ? authRoutes : unAuthRoutes
   ))
 }
