@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, { useEffect} from 'react'
 import { useForm, Controller }  from 'react-hook-form'
 import { TextField, Button, Grid, CircularProgress } from '@material-ui/core'
 import axios from 'axios'
@@ -20,7 +20,7 @@ const NewPlace = () => {
 
   useEffect(() => {
     register({ name: 'image' })
-  }, [])
+  }, [register])
 
   const onSubmit = async ({title, description, address, image}) => {
     ui.setIsLoading(true)
@@ -33,7 +33,7 @@ const NewPlace = () => {
     try {
       await axios({
         method: "POST",
-        url: "http://localhost:5000/api/places/",
+        url: `${process.env.REACT_APP_API_URL}/api/places/`,
         data: placeFormData,
         headers: {
         'Content-Type': 'multipart/form-data;',

@@ -30,7 +30,7 @@ const UserPlaces = () => {
   const handleDelete = async (id) => {
     ui.setIsLoading(true)
     try {
-      await axios.delete(`http://localhost:5000/api/places/${id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/places/${id}`, {
         headers: {
           'Authorization': `token ${auth.token}`
         }

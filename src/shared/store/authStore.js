@@ -25,7 +25,7 @@ export function authStore() {
       this.openLoginError = false
       this.isLoading = true
       try {
-        const response = await axios.post('http://localhost:5000/api/users/signin',{
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/users/signin`,{
           email,
           password
         })
@@ -50,7 +50,7 @@ export function authStore() {
       try {
         const response = await axios({
           method: "POST",
-          url: 'http://localhost:5000/api/users/signup',
+          url: `${process.env.REACT_APP_API_URL}/api/users/signup`,
           data: userFormData,
           headers: {
           'Content-Type': 'multipart/form-data;'

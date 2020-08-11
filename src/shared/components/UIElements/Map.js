@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import GoogleMapReact from 'google-map-react';
 import './marker.css'
  
-export default function SimpleMap({location, title}){
-  const [center, setCenter] = useState({
+export default function SimpleMap({location}){
+  const [center] = useState({
     lat: location.lat,
     lng: location.lng
   })
-  const [zoom, setZoom] = useState(11)
+  const [zoom] = useState(11)
 
     return (
       <div style={{ height: '50vh', width: '100%' }}>
@@ -19,7 +19,6 @@ export default function SimpleMap({location, title}){
           <Marker 
             lat={location.lat}
             lng={location.lng}
-            text={title}
           />
         </GoogleMapReact>
       </div>

@@ -10,7 +10,7 @@ import StatusBar from '../../shared/components/UIElements/StatusBar'
 import { useObserver } from 'mobx-react-lite'
 
 
-const placeEndpoint = "http://localhost:5000/api/places";
+const placeEndpoint = `${process.env.REACT_APP_API_URL}/api/places`;
 
 const getData = async (id) => {
   try {

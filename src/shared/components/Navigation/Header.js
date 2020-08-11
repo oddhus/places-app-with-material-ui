@@ -33,6 +33,7 @@ const useStyles = makeStyles(theme => ({
     color: "white",
     opacity: 0.7,
     marginLeft: 20,
+    marginRight: 20,
     "&:hover": {
       opacity: 1
     }
@@ -126,8 +127,8 @@ export default function Header(props) {
     {name: "All Users", link: "/", activeIndex: 0},
     auth.isLoggedIn() && {name: "My Places", link: `/${auth.userId}/places`, activeIndex: 1},
     auth.isLoggedIn() && {name: "Add place", link: "/places/new", activeIndex: 2},
-    !auth.isLoggedIn() && {name: "Authenticate", link: "/auth", activeIndex: 3},
-    {name: "About", link: "/about", activeIndex: 4},
+    {name: "About", link: "/about", activeIndex: 3},
+    !auth.isLoggedIn() && {name: "Authenticate", link: "/auth", activeIndex: 4},
   ]
 
   useEffect(() => {
@@ -194,6 +195,7 @@ export default function Header(props) {
               )
           )}
         </List>
+        {auth.isLoggedIn() && <Button className={classes.button} onClick={logoutUser} style={{marginLeft: 0}}>Logout</Button>}
       </SwipeableDrawer>
       <IconButton className={classes.drawerIconContainer} onClick={() => setOpenDrawer(!openDrawer)} disableRipple>
         <MenuIcon className={classes.drawerIcon}/>
