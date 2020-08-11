@@ -66,7 +66,7 @@ export default function SignUp({setSignInMode}) {
   const { auth } = useStore()
 
   const onSubmit = async ({firstName, lastName, email, password, uploadPhoto}) => {
-    await auth.signup(firstName, lastName, email, password, uploadPhoto)
+    await auth.signup(`${process.env.REACT_APP_API_URL}/api/users/signup`, firstName, lastName, email, password, uploadPhoto)
   }
 
   return useObserver(() => (

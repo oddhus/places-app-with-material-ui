@@ -1,4 +1,3 @@
-import React from 'react'
 import axios from 'axios'
 
 export function authStore() {
@@ -22,11 +21,11 @@ export function authStore() {
     setOpenSignUpError(value){
       this.signUpError = value
     },
-    async login(email, password){
+    async login(url, email, password){
       this.openLoginError = false
       this.isLoading = true
       try {
-        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/users/signin`,{
+        const response = await axios.post(url,{
           email,
           password
         })
@@ -40,7 +39,7 @@ export function authStore() {
         this.openLoginError = true
       }
     },
-    async signup(firstName, lastName, email, password, image){
+    async signup(url, firstName, lastName, email, password, image){
       this.openLoginError = false
       this.isLoading = true
       const userFormData = new FormData();
@@ -51,7 +50,7 @@ export function authStore() {
       try {
         const response = await axios({
           method: "POST",
-          url: `${process.env.REACT_APP_API_URL}/api/users/signup`,
+          url,
           data: userFormData,
           headers: {
           'Content-Type': 'multipart/form-data;'

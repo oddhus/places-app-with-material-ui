@@ -61,7 +61,7 @@ export default function SignIn({setSignInMode}) {
   const { auth } = useStore()
 
   const onSubmit = async ({email, password}) => {
-    await auth.login(email, password)
+    await auth.login(`${process.env.REACT_APP_API_URL}/api/users/signin`, email, password)
   }  
 
   return useObserver(() => (
