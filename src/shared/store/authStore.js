@@ -24,10 +24,18 @@ export function authStore() {
     async login(url, email, password){
       this.openLoginError = false
       this.isLoading = true
+      const userFormData = new FormData();
+      userFormData.append("email", email);
+      userFormData.append("password", password);
       try {
-        const response = await axios.post(url,{
-          email,
-          password
+        const response = await axios({
+          method: "POST",
+          url,
+          data: userFormData,
+          headers: {
+          'Content-Type': 'multipart/form-data;',
+          "Access-Control-Allow-Origin": "*"
+          }
         })
         this.isLoading = false
         if(response.statusText === 'OK'){
@@ -53,7 +61,8 @@ export function authStore() {
           url,
           data: userFormData,
           headers: {
-          'Content-Type': 'multipart/form-data;'
+          'Content-Type': 'multipart/form-data;',
+          "Access-Control-Allow-Origin": "*"
           }
         })
         this.handleLogin(response)
