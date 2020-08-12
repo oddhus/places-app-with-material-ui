@@ -209,7 +209,7 @@ export default function Header(props) {
         <AppBar position="fixed" className={classes.appbar}>
           <Toolbar disableGutters>
             <Button component={Link} to="/" className={classes.logoContainer} onClick={() => props.setValue(0)} disableRipple>
-              <Typography variant="h2" style={{color: "white", paddingLeft: 10}}>Places App</Typography>
+              <Typography variant="h2" style={{color: "white", paddingLeft: 10, fontStyle: "italic"}}>my places</Typography>
               {/* <img alt="company logo" src={logo} className={classes.logo} /> */}
             </Button>
             {matches ? drawer : tabs}
