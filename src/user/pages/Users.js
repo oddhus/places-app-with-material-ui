@@ -8,7 +8,7 @@ import StatusBar from '../../shared/components/UIElements/StatusBar'
 import { red } from '@material-ui/core/colors';
 import { useStore } from '../../shared/store/store';
 
-const usersEndpoint = "http://localhost:5000/api/users";
+const usersEndpoint = `${process.env.REACT_APP_API_URL}/api/users`;
 
 const getData = async () => {
   try {
