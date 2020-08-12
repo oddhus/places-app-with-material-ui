@@ -9,7 +9,7 @@ import PlaceList from '../components/PlaceList'
 import StatusBar from '../../shared/components/UIElements/StatusBar'
 import { useObserver } from 'mobx-react-lite'
 
-const userPlacesEndpoint = "http://localhost:5000/api/places/user";
+const userPlacesEndpoint = `${process.env.REACT_APP_API_URL}/api/places/user`;
 
 const getData = async (id) => {
   try {
