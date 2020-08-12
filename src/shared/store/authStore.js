@@ -24,16 +24,16 @@ export function authStore() {
     async login(url, email, password){
       this.openLoginError = false
       this.isLoading = true
-      const userFormData = new FormData();
-      userFormData.append("email", email);
-      userFormData.append("password", password);
       try {
         const response = await axios({
           method: "POST",
           url,
-          data: userFormData,
+          data: {
+            email,
+            password
+          },
           headers: {
-          'Content-Type': 'multipart/form-data;',
+          "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*"
           }
         })
